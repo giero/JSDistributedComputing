@@ -2,6 +2,7 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: "@AcmeBundle/Resources/config/services.yml" }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -30,7 +31,17 @@ framework:
         save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
     fragments:       ~
     http_method_override: true
-    assets: ~
+
+assetic:
+    debug:          '%kernel.debug%'
+    use_controller: '%kernel.debug%'
+    bundles: [AcmeBundle]
+    filters:
+        cssrewrite: ~
+    assets:
+        jquery:
+            inputs:
+                - "%kernel.root_dir%/../vendor/jquery/jquery/jquery-2.2.1.js"
 
 # Twig Configuration
 twig:
@@ -72,3 +83,6 @@ gos_web_socket:
     server:
         port: 8080        #The port the socket server will listen on
         host: 127.0.0.1   #The host ip to bind to
+        router:
+            resources:
+                - @AcmeBundle/Resources/config/pubsub/routing.yml
