@@ -12,9 +12,19 @@ use Gos\Bundle\WebSocketBundle\Topic\TopicInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\Topic;
 use Gos\Bundle\WebSocketBundle\Router\WampRequest;
+use Symfony\Bridge\Monolog\Logger;
 
 class AcmeTopic implements TopicInterface
 {
+
+    private $toCalculate = [];
+    private $calculated = [];
+
+    public function __construct()
+    {
+        $this->toCalculate = range(0, 20);
+    }
+
     /**
      * This will receive any Subscription requests for this topic.
      *
@@ -26,7 +36,7 @@ class AcmeTopic implements TopicInterface
     public function onSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => $connection->resourceId." has joined ".$topic->getId()]);
+//        $topic->broadcast(['msg' => $connection->resourceId." has joined ".$topic->getId()]);
     }
 
     /**
@@ -40,7 +50,7 @@ class AcmeTopic implements TopicInterface
     public function onUnSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => $connection->resourceId." has left ".$topic->getId()]);
+//        $topic->broadcast(['msg' => $connection->resourceId." has left ".$topic->getId()]);
     }
 
 
@@ -63,7 +73,27 @@ class AcmeTopic implements TopicInterface
         array $exclude,
         array $eligible
     ) {
-        $connection->event($topic->getId(), ['msg' => 'lol']);
+        if (is_array($event) && isset($event['input']) & isset($event['result'])) {
+
+            $this->calculated[$event['input']] = $event['result'];
+
+            $calculated = [];
+            foreach ($this->calculated as $key => $value) {
+                $calculated[] = "{$key}: {$value}";
+            }
+
+            $topic->broadcast('Calculated for: ' . join(', ', $calculated));
+        }
+
+        if (empty($this->toCalculate)) {
+            $this->toCalculate = range(0, random_int(1, 20));
+            $this->calculated = [];
+            $topic->broadcast('NEW DATA : ' . count($this->toCalculate) . ' elements');
+        }
+
+        $input = array_rand($this->toCalculate);
+        unset($this->toCalculate[$input]);
+        $connection->event($topic->getId(), ['input' => $input]);
     }
 
     /**

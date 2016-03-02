@@ -11,6 +11,11 @@
     {{ ws_client() }}
 
     <script>
+        function randomIntFromInterval(min,max)
+        {
+            return Math.floor(Math.random()*(max-min+1)+min);
+        }
+
         var webSocket = WS.connect('ws://127.0.0.1:8080');
 
         webSocket.on('socket/connect', function (session) {
@@ -19,20 +24,31 @@
 
             //the callback function in 'subscribe' is called everytime an event is published in that channel.
             session.subscribe('acme/channel', function (uri, payload) {
-                console.log('Received message', payload.msg);
+                if ($.isPlainObject(payload) && 'input' in payload) {
+                    var input = payload.input;
+
+                    setTimeout(function () {
+                        var result = {
+                            input: input,
+                            result: input + input
+                        };
+
+                        console.log('Calculated ', result);
+                        session.publish('acme/channel', result);
+                    }, randomIntFromInterval(1000, 4000));
+                } else {
+                    console.log(payload);
+                }
             });
 
-            $('#sendMessage').on('click', function () {
-                session.publish('acme/channel', {msg: 'This is a message!'});
+            session.publish('acme/channel', {
+                ready: true
             });
         });
 
         webSocket.on('socket/disconnect', function (error) {
             //error provides us with some insight into the disconnection: error.reason and error.code
-
             console.log('Disconnected for ' + error.reason + ' with code ' + error.code);
         });
     </script>
-
-
 {% endblock %}
