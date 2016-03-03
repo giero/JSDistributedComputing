@@ -41,7 +41,13 @@ assetic:
     assets:
         jquery:
             inputs:
-                - "%kernel.root_dir%/../vendor/jquery/jquery/jquery-2.2.1.js"
+                - "%kernel.root_dir%/../vendor/components/jquery/jquery.js"
+        underscore:
+            inputs:
+                - "%kernel.root_dir%/../vendor/components/underscore/underscore.js"
+        requirejs:
+            inputs:
+                - "%kernel.root_dir%/../vendor/jrburke/requirejs/require.js"
 
 # Twig Configuration
 twig:

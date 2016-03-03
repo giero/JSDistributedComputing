@@ -23,15 +23,16 @@
         {
             "type": "package",
             "package": {
-                "name": "jquery/jquery",
-                "version": "2.2.1",
+                "name": "jrburke/requirejs",
+                "version": "2.1.22",
                 "dist": {
-                    "url": "https://code.jquery.com/jquery-2.2.1.js",
+                    "url": "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.js",
                     "type": "file"
                 }
             }
         }
     ],
+
     "require": {
         "php": ">=5.5.9",
         "symfony/symfony": "2.8.*",
@@ -45,7 +46,9 @@
         "incenteev/composer-parameter-handler": "~2.0",
 
         "gos/web-socket-bundle": "^1.6",
-        "jquery/jquery": "2.2.*"
+        "components/jquery": "^2.2",
+        "components/underscore": "^1.8",
+        "jrburke/requirejs": "2.1.*"
     },
     "require-dev": {
         "sensio/generator-bundle": "~3.0",
@@ -70,6 +73,7 @@
         ]
     },
     "config": {
+        "component-requirejs": false,
         "bin-dir": "bin",
         "platform": {
             "php": "5.5.9"
