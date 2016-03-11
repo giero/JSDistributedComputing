@@ -1,7 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <button id='sendMessage'>SEND MESSAGE</button>
+    <h1>Sum from 1 to n</h1>
+    <fieldset>
+        <legend>Already calculated</legend>
+        <span id="Calclulated">&nbsp;</span>
+    </fieldset>
+    <fieldset>
+        <legend>Current calculation</legend>
+        <ul id="CalculationList">
+        </ul>
+    </fieldset>
 {% endblock body %}
 
 {% block javascripts %}

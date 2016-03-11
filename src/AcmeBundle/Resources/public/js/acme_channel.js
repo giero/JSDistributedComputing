@@ -1,5 +1,7 @@
 define(['jquery', 'underscore', 'plugin/worker!counting.js'], function ($, _, counter) {
-    var webSocket = WS.connect('ws://127.0.0.1:8080');
+    var webSocket = WS.connect('ws://127.0.0.1:8080'),
+        $calclulated = $('#Calclulated'),
+        $calculationList = $('#CalculationList');
 
     webSocket.on('socket/connect', function (session) {
         //session is an Autobahn JS WAMP session.
@@ -10,6 +12,7 @@ define(['jquery', 'underscore', 'plugin/worker!counting.js'], function ($, _, co
             if ($.isPlainObject(payload) && 'input' in payload) {
                 var input = payload.input;
 
+                $calculationList.html('<li>FOR ' + input + '</li>');
                 counter.postMessage(input);
                 counter.onmessage = function (e) {
                     switch (e.data) {
@@ -17,12 +20,17 @@ define(['jquery', 'underscore', 'plugin/worker!counting.js'], function ($, _, co
                             counter.postMessage(input);
                             break;
                         default:
-                            session.publish('acme/channel', e.data);
+                            if (e.data.sum !== undefined) {
+                                $calculationList.append('<li>' + e.data.i + ' => ' + e.data.sum + '</li>');
+                            } else {
+                                session.publish('acme/channel', e.data);
+                            }
+
                             break;
                     }
                 };
             } else {
-                console.log(payload);
+                $calclulated.text(payload);
             }
         });
 

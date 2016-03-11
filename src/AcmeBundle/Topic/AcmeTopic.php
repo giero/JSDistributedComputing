@@ -22,7 +22,7 @@ class AcmeTopic implements TopicInterface
 
     public function __construct()
     {
-        $this->toCalculate = range(0, 20);
+        $this->toCalculate = range(0, 40);
     }
 
     /**
@@ -86,13 +86,14 @@ class AcmeTopic implements TopicInterface
         }
 
         if (empty($this->toCalculate)) {
-            $this->toCalculate = range(0, random_int(1, 20));
+            $this->toCalculate = range(0, random_int(1, 40));
             $this->calculated = [];
             $topic->broadcast('NEW DATA : ' . count($this->toCalculate) . ' elements');
         }
 
         $input = array_rand($this->toCalculate);
         unset($this->toCalculate[$input]);
+
         $connection->event($topic->getId(), ['input' => $input]);
     }
 
