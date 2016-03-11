@@ -11,16 +11,22 @@ define(['jquery', 'underscore', 'plugin/worker!counting.js'], function ($, _, co
                 var input = payload.input;
 
                 counter.postMessage(input);
-
-                counter.onmessage = function (event) {
-                    console.log('Sending', event.data);
-                    session.publish('acme/channel', event.data);
+                counter.onmessage = function (e) {
+                    switch (e.data) {
+                        case 'module loaded':
+                            counter.postMessage(input);
+                            break;
+                        default:
+                            session.publish('acme/channel', e.data);
+                            break;
+                    }
                 };
             } else {
                 console.log(payload);
             }
         });
 
+        console.log("tell I'm ready");
         session.publish('acme/channel', {
             ready: true
         });
