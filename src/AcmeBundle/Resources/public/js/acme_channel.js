@@ -1,4 +1,4 @@
-define(['jquery', 'underscore'], function ($, _) {
+define(['jquery', 'underscore', 'plugin/worker!counting.js'], function ($, _, counter) {
     var webSocket = WS.connect('ws://127.0.0.1:8080');
 
     webSocket.on('socket/connect', function (session) {
@@ -10,15 +10,12 @@ define(['jquery', 'underscore'], function ($, _) {
             if ($.isPlainObject(payload) && 'input' in payload) {
                 var input = payload.input;
 
-                setTimeout(function () {
-                    var result = {
-                        input: input,
-                        result: input + input
-                    };
+                counter.postMessage(input);
 
-                    console.log('Calculated ', result);
-                    session.publish('acme/channel', result);
-                }, _.random(1000, 4000));
+                counter.onmessage = function (event) {
+                    console.log('Sending', event.data);
+                    session.publish('acme/channel', event.data);
+                };
             } else {
                 console.log(payload);
             }
